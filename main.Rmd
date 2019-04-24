@@ -1,0 +1,101 @@
+---
+title: "Main RMD"
+author: "Brad Gannon"
+date: "April 23, 2019"
+output: html_document
+---
+
+```{r}
+library(tidyverse)
+
+knitr::opts_chunk$set(fig.width = 15, fig.height=10) # change figure size in Rmd/HTML
+
+# Load data from CSV
+data <- read.csv('MinimumWageData.csv')
+names(data)
+
+head(data, 2)
+
+# Logical to delete Table_Data and Footnote columns, these are just notes and not useful
+
+drops <- c("Table_Data", "Footnote")
+
+data <- data[, !(names(data) %in% drops)]
+
+head(data, 3)
+```
+
+```{r}
+# See if data types in columns are logical
+str(data)
+
+# Data is already fairly clean, but if more cleaning is to be done it can be coded below
+```
+
+```{r}
+# For graphing, I will divide the data into pre-1990 and 1990-2017
+
+pre1990 <- filter(data, Year < 1990)
+post1990 <- filter(data, Year >= 1990)
+
+# Breakdown of data from each year
+p <- ggplot(pre1990, aes(x=Year)) + geom_histogram(color="black", fill="white", binwidth=1)
+p <- p + xlab("Year") + ylab("Count of Data Points") + ggtitle("Data Points by Year (Pre-1990)")
+p
+
+p <- ggplot(post1990, aes(x=Year)) + geom_histogram(color="black", fill="gray", binwidth=1)
+p <- p + xlab("Year") + ylab("Count of Data Points") + ggtitle("Data Points by Year (Post-1990)")
+p
+
+# These histograms show that the data for each year is all even, so the comparisons should be fairly accurate
+
+# We will look at the spread of High.Value and Low.Value for each state by year
+
+p <- ggplot(pre1990, aes(x=Year, y=High.Value, color=State)) + geom_boxplot(outlier.color="red", outlier.shape=8, outlier.size=2)
+p <- p + xlab("Year") + ylab("Hourly Wage ($)") + ggtitle("Highest Minimum Wage Across US States pre-1990")
+p <- p + facet_wrap(pre1990$State) + theme(legend.position="none")
+p
+
+p <- ggplot(pre1990, aes(x=Year, y=Low.Value, color=State)) + geom_boxplot(outlier.color="red", outlier.shape=8, outlier.size=2)
+p <- p + xlab("Year") + ylab("Hourly Wage ($)") + ggtitle("Lowest Minimum Wage Across US States pre-1990")
+p <- p + facet_wrap(pre1990$State) + theme(legend.position="none")
+p
+
+p <- ggplot(post1990, aes(x=Year, y=High.Value, color=State)) + geom_boxplot(outlier.color="red", outlier.shape=8, outlier.size=2)
+p <- p + xlab("Year") + ylab("Hourly Wage ($)") + ggtitle("Highest Minimum Wage Across US States post-1990")
+p <- p + facet_wrap(post1990$State) + theme(legend.position="none")
+p
+
+p <- ggplot(post1990, aes(x=Year, y=Low.Value, color=State)) + geom_boxplot(outlier.color="red", outlier.shape=8, outlier.size=2)
+p <- p + xlab("Year") + ylab("Hourly Wage ($)") + ggtitle("Lowest Minimum Wage Across US States post-1990")
+p <- p + facet_wrap(post1990$State) + theme(legend.position="none")
+p
+```
+
+```{r}
+# Look at trend of High.Value and Low.Value across the years overall
+p <- ggplot(pre1990, aes(x=Year, y=High.Value)) + geom_violin(trim = FALSE)
+p <- p + stat_summary(fun.y=median, geom="line", shape=18, size=2, color="red")
+p <- p + ylab("High Minimum Wage ($)") + xlab("Year") + ggtitle("High Minimum Wage Trend pre-1990")
+p
+
+p <- ggplot(pre1990, aes(x=Year, y=Low.Value)) + geom_violin(trim = FALSE)
+p <- p + stat_summary(fun.y=median, geom="line", shape=18, size=2, color="blue")
+p <- p + ylab("Low Minimum Wage ($)") + xlab("Year") + ggtitle("Low Minimum Wage Trend pre-1990")
+p
+
+p <- ggplot(post1990, aes(x=Year, y=High.Value)) + geom_violin(trim = FALSE)
+p <- p + stat_summary(fun.y=median, geom="line", shape=18, size=2, color="green")
+p <- p + ylab("High Minimum Wage ($)") + xlab("Year") + ggtitle("High Minimum Wage Trend post-1990")
+p
+
+p <- ggplot(post1990, aes(x=Year, y=Low.Value)) + geom_violin(trim = FALSE)
+p <- p + stat_summary(fun.y=median, geom="line", shape=18, size=2, color="purple")
+p <- p + ylab("Low Minimum Wage ($)") + xlab("Year") + ggtitle("Low Minimum Wage Trend post-1990")
+p
+```
+
+```{r}
+# We should look at High.2018 and Low.2018 data in a similar way, but I left off here because it is almost midnight
+
+```
