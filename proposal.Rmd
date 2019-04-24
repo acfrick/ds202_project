@@ -1,0 +1,27 @@
+---
+title: "proposal"
+author: "Allegra Frickel"
+date: "3/25/2019"
+output: html_document
+---
+
+**Team members**
+Audrey Comer
+Allegra Frickel (Project Coordinator)
+Bradley Gannon
+Seydou Yacouba Seydou
+
+**Link to data source**
+
+https://www.kaggle.com/lislejoem/us-minimum-wage-by-state-from-1968-to-2017
+
+**Overview**
+
+This dataset contains state and federal minimum wages from 1968 to 2017. Columns include year, state, data from the U.S. Department of Labor, footnotes, high and low values of proposed minimum wage values, Consumer Price Index (the average cost of goods and services each year) and the 2018-equivalent value.
+
+**Questions we plan to answer from the dataset**
+
+1. Which states showed the highest growth and which states showed the lowest growth of minimum wage?
+2. Compare the minimum wage to the Consumer Price Index (CPI)
+3. Explore if the gap between minimum wage and CPI has narrowed between the 2018-equivalent highs and lows as the years increase.
+4. Show a graphical summary of minimum wage's growth or decline to keep up with inflation.
