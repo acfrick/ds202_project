@@ -1,0 +1,41 @@
+---
+title: "project_report"
+author: "Allegra Frickel"
+date: "4/25/2019"
+output: html_document
+---
+
+---
+title: "Project_report"
+author: "Allegra Frickel"
+date: "4/25/2019"
+output: html_document
+---
+
+#Minimum Wages#
+
+**Description**
+Sourced from the United States Deptarment of Labor (DOL), this data set surrounds minimum wages in the United States from 1968 to 2017. Each wage provided in the data has a 2018 equivalency value.
+
+**Columns**
+- Year
+- State
+- Table Data: uncleaned data from the DOL
+- Footnote: supplementary information from the DOL
+- High.Value: Proposed minimum wage for those protected under the state's minimum wage laws
+- Low.Value: Implemented minimum wage for those protected under the state's minimum wage laws
+- High.2018: The High.Value in a 2018 dollar value
+- Low.2018: The Low.Value in a 2018 dollar value
+- CPI.Average: Average Consumer Price Index for the corresponding year. Out of a basket of goods accessible to everyone, CPI average is the average number of goods purchased by one consumer over the course of the year. CPI stays the same, but the price changes over the years. Thus, CPI average is used to calculcate a year's 2018-equivalent value.
+
+**Questions Raised**
+
+**Pipeline for Cleaning**
+
+**Exploratory Analysis**
+
+**Visualization**
+
+**Answers to Questions**
+
+**Conclusion**
