@@ -37,6 +37,28 @@ Sourced from the United States Deptarment of Labor (DOL), this data set surround
 
 **Pipeline for Cleaning**
 
+The data was already cleaned on Kaggle, so the cleaning is very minimal. Outside of deleting the two columns that did not contain valuable information, the NA values, data types, factoring, etc. was already done. It is logical to delete Table_Data and Footnote columns, these are just notes and not useful. For graphing, the data will be divided into pre-1990 and 1990-2017.
+
+```{r}
+library(tidyverse)
+knitr::opts_chunk$set(fig.width = 15, fig.height=10) # change figure size in Rmd/HTML
+# Load data from CSV
+data <- read.csv('MinimumWageData.csv')
+names(data)
+head(data, 2)
+```
+
+```{r}
+drops <- c("Table_Data", "Footnote")
+data <- data[, !(names(data) %in% drops)]
+head(data, 3)
+```
+
+```{r}
+pre1990 <- filter(data, Year < 1990)
+post1990 <- filter(data, Year >= 1990)
+```
+
 **Exploratory Analysis**
 
 **Visualization**
@@ -44,3 +66,4 @@ Sourced from the United States Deptarment of Labor (DOL), this data set surround
 **Answers to Questions**
 
 **Conclusion**
+include limitations here, what we would do differently and explore more
