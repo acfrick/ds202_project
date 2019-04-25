@@ -30,6 +30,11 @@ Sourced from the United States Deptarment of Labor (DOL), this data set surround
 
 **Questions Raised**
 
+1. Which states showed the highest growth and which states showed the lowest growth of minimum wage?
+2. Compare the minimum wage to the Consumer Price Index (CPI)
+3. Explore if the gap between minimum wage and CPI has narrowed between the 2018-equivalent highs and lows as the years increase.
+4. Show a graphical summary of minimum wage's growth or decline to keep up with inflation.
+
 **Pipeline for Cleaning**
 
 **Exploratory Analysis**
