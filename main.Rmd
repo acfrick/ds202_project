@@ -29,8 +29,9 @@ head(data, 3)
 # See if data types in columns are logical
 str(data)
 
-# Data is already fairly clean, but if more cleaning is to be done it can be coded below
 ```
+
+The data was already cleaned on Kaggle, so the cleaning is very minimal. Outside of deleting the two columns that did not contain valuable information, the NA values, data types, factoring, etc. was already done.
 
 ```{r}
 # For graphing, I will divide the data into pre-1990 and 1990-2017
