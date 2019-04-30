@@ -162,3 +162,17 @@ ggplotly(p3 + eralines + fedline + eralabels + plotlabs)
 p3 + eralines + eralabels + plotlabs + theme(legend.position = "none")
 ```
 
+Show a graphical summary of minimum wage growth or decline to keep up with inflation 
+Federal, Iowa, California, DC, etc.
+```{r}
+p4 <- ggplot(newdata %>% filter(State=='Iowa' | State=='Federal (FLSA)') %>% filter(Year >1990),
+             aes(x=Year, y=High.2018, by=State)) + geom_line(aes(col=State))
+eralines <- geom_vline(xintercept = newdata$xmin, alpha=0.25)
+eralabels <- geom_text(data=newdata, x=newdata$xmin, y=15, label=newdata$fed.High.Value, angle=90, size=3, hjust=0.3)
+p5 <- geom_line(data = newdata %>% filter(State=='Iowa' | State =='Federal (FLSA)')  %>% filter(Year>1990), aes(x=Year, y=High.Value, col=State), alpha=0.5)
+plotlabs <- labs(title = "A Look at Inflation",
+                y = 'Wage')
+
+ggplotly(p4 + p5 + plotlabs)
+```
+
