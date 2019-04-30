@@ -100,3 +100,42 @@ p
 # We should look at High.2018 and Low.2018 data in a similar way, but I left off here because it is almost midnight
 
 ```
+
+All states over time -- ggplotly
+```{r}
+library(plotly)
+p2 <- ggplot(data, aes(x=Year, y=High.Value, by=State)) + geom_line(aes(col=State)) 
+ggplotly(p2)
+```
+
+
+How do states compare with the Federal wage? Which states closely follow it? Which states are above? Below?
+```{r}
+library(dplyr)
+#create new column with difference from Federal of the same year
+fed <- data %>% filter(State == 'Federal (FLSA)') %>% select(Year, High.Value)  #just Fed data
+fed$fed.High.Value <- fed$High.Value #duplicates column with new name
+fed <- fed %>% select(Year, fed.High.Value) #drops old name column (because I couldn't figure out an easier way)
+
+eras <- fed %>% dplyr::group_by(fed.High.Value) %>% mutate(xmin=min(Year), xmax=max(Year)) #adds col for first and last year 
+
+data2 <- data %>% group_by(State) %>% mutate(fed_diff = High.Value - fed$fed.High.Value)
+newdata <- merge(x=data2, y=eras)
+#rects <- geom_rect(data=newdata, aes(xmin=xmin, xmax=xmax, ymin=-8, ymax=3, fill="none"), color="black", alpha=0.5)
+eralines <- geom_vline(xintercept = newdata$xmax, alpha=0.25)
+eralabels <- geom_text(data=newdata, x=newdata$xmax, y=4, label=newdata$fed.High.Value, angle=90, size=4)
+zeroline <- geom_hline(yintercept = 0)
+plotlabs <- labs(title = "State Minimum Wage -- difference from Federal minimum wage",
+                y = 'Difference ($)')
+p3 <- ggplot(newdata, aes(x=Year, y=fed_diff, by=State)) + geom_line(aes(col=State))
+#p4 <- geom_line(aes(x=Year, y=fed_diff, col=State))
+ggplotly(p3 + eralines + zeroline + eralabels + plotlabs)
+
+p3 + eralines + eralabels + zeroline + plotlabs + theme(legend.position = "none")
+
+```
+
+
+
+
+
