@@ -121,21 +121,44 @@ eras <- fed %>% dplyr::group_by(fed.High.Value) %>% mutate(xmin=min(Year), xmax=
 
 data2 <- data %>% group_by(State) %>% mutate(fed_diff = High.Value - fed$fed.High.Value)
 newdata <- merge(x=data2, y=eras)
-#rects <- geom_rect(data=newdata, aes(xmin=xmin, xmax=xmax, ymin=-8, ymax=3, fill="none"), color="black", alpha=0.5)
-eralines <- geom_vline(xintercept = newdata$xmax, alpha=0.25)
-eralabels <- geom_text(data=newdata, x=newdata$xmax, y=4, label=newdata$fed.High.Value, angle=90, size=4)
+eralines <- geom_vline(xintercept = newdata$xmin, alpha=0.25)
+eralabels <- geom_text(data=newdata, x=newdata$xmin, y=4, label=newdata$fed.High.Value, angle=90, size=3, hjust=0.2)
 zeroline <- geom_hline(yintercept = 0)
 plotlabs <- labs(title = "State Minimum Wage -- difference from Federal minimum wage",
                 y = 'Difference ($)')
 p3 <- ggplot(newdata, aes(x=Year, y=fed_diff, by=State)) + geom_line(aes(col=State))
-#p4 <- geom_line(aes(x=Year, y=fed_diff, col=State))
 ggplotly(p3 + eralines + zeroline + eralabels + plotlabs)
 
 p3 + eralines + eralabels + zeroline + plotlabs + theme(legend.position = "none")
 
 ```
 
+How much is the minimum wage worth in 2018 dollars? 
+```{r}
+eralines <- geom_vline(xintercept = newdata$xmin, alpha=0.25)
+eralabels <- geom_text(data=newdata, x=newdata$xmin, y=15, label=newdata$fed.High.Value, angle=90, size=3, hjust=0.3)
+fedline <- geom_line(data = (newdata %>% filter(State=='Federal (FLSA)')), col="black", size=1.2)
+plotlabs <- labs(title = "State Minimum Wages in 2018 Dollars",
+                y = '($)')
+p3 <- ggplot(newdata, aes(x=Year, y=High.2018, by=State)) + geom_line(aes(col=State))
+
+ggplotly(p3 + eralines + fedline + eralabels + plotlabs)
+
+p3 + eralines + eralabels + plotlabs + fedline + theme(legend.position = "none")
 
 
 
+```
+
+```{r}
+p3 <- ggplot(newdata, aes(x=Year, y=CPI.Average/High.2018, by=State)) + geom_line(aes(col=State))
+eralines <- geom_vline(xintercept = newdata$xmin, alpha=0.25)
+eralabels <- geom_text(data=newdata, x=newdata$xmin, y=15, label=newdata$fed.High.Value, angle=90, size=3, hjust=0.3)
+fedline <- geom_line(data = (newdata %>% filter(State=='Federal (FLSA)')), col="black", size=1.2)
+plotlabs <- labs(title = "Hours of min. wage work needed to meet CPI",
+                y = 'Hours')
+ggplotly(p3 + eralines + fedline + eralabels + plotlabs)
+
+p3 + eralines + eralabels + plotlabs + theme(legend.position = "none")
+```
 
