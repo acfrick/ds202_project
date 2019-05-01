@@ -140,39 +140,40 @@ eralabels <- geom_text(data=newdata, x=newdata$xmin, y=15, label=newdata$fed.Hig
 fedline <- geom_line(data = (newdata %>% filter(State=='Federal (FLSA)')), col="black", size=1.2)
 plotlabs <- labs(title = "State Minimum Wages in 2018 Dollars",
                 y = '($)')
-p3 <- ggplot(newdata, aes(x=Year, y=High.2018, by=State)) + geom_line(aes(col=State))
+p4 <- ggplot(newdata, aes(x=Year, y=High.2018, by=State)) + geom_line(aes(col=State))
 
-ggplotly(p3 + eralines + fedline + eralabels + plotlabs)
+ggplotly(p4 + eralines + fedline + eralabels + plotlabs)
 
-p3 + eralines + eralabels + plotlabs + fedline + theme(legend.position = "none")
+p4 + eralines + eralabels + plotlabs + fedline + theme(legend.position = "none")
 
 
 
 ```
 
 ```{r}
-p3 <- ggplot(newdata, aes(x=Year, y=CPI.Average/High.2018, by=State)) + geom_line(aes(col=State))
+p5 <- ggplot(newdata, aes(x=Year, y=CPI.Average/High.2018, by=State)) + geom_line(aes(col=State))
 eralines <- geom_vline(xintercept = newdata$xmin, alpha=0.25)
 eralabels <- geom_text(data=newdata, x=newdata$xmin, y=15, label=newdata$fed.High.Value, angle=90, size=3, hjust=0.3)
 fedline <- geom_line(data = (newdata %>% filter(State=='Federal (FLSA)')), col="black", size=1.2)
 plotlabs <- labs(title = "Hours of min. wage work needed to meet CPI",
                 y = 'Hours')
-ggplotly(p3 + eralines + fedline + eralabels + plotlabs)
+ggplotly(p5 + eralines + fedline + eralabels + plotlabs)
 
-p3 + eralines + eralabels + plotlabs + theme(legend.position = "none")
+p5 + eralines + eralabels + plotlabs + theme(legend.position = "none")
 ```
 
 Show a graphical summary of minimum wage growth or decline to keep up with inflation 
 Federal, Iowa, California, DC, etc.
 ```{r}
-p4 <- ggplot(newdata %>% filter(State=='Iowa' | State=='Federal (FLSA)') %>% filter(Year >1990),
-             aes(x=Year, y=High.2018, by=State)) + geom_line(aes(col=State))
+p6.2018 <- ggplot(newdata %>% filter(State=='Federal (FLSA)' | State=='Iowa' | State =='California') %>% filter(Year >1990),
+             aes(x=Year, y=High.2018, by=State)) + geom_line(aes(col=State)) + geom_point(aes(col=State))
 eralines <- geom_vline(xintercept = newdata$xmin, alpha=0.25)
-eralabels <- geom_text(data=newdata, x=newdata$xmin, y=15, label=newdata$fed.High.Value, angle=90, size=3, hjust=0.3)
-p5 <- geom_line(data = newdata %>% filter(State=='Iowa' | State =='Federal (FLSA)')  %>% filter(Year>1990), aes(x=Year, y=High.Value, col=State), alpha=0.5)
+p6.real <- geom_line(data = newdata %>% filter(State=='Iowa' | State =='Federal (FLSA)' | State=='California')  %>% filter(Year>1990), aes(x=Year, y=High.Value, col=State), linetype="dashed")
+p6.real.points <- geom_point(data = newdata %>% filter(State=='Iowa' | State =='Federal (FLSA)' | State=='California')  %>% filter(Year>1990), aes(x=Year, y=High.Value, col=State))
 plotlabs <- labs(title = "A Look at Inflation",
                 y = 'Wage')
 
-ggplotly(p4 + p5 + plotlabs)
+ggplotly(p6.2018 + p6.real + plotlabs)
+p6.2018 + p6.real + p6.real.points + plotlabs 
 ```
 
