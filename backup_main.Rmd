@@ -115,36 +115,81 @@ fed <- fed %>% select(Year, fed.High.Value) #drops old name column (because I co
 
 eras <- fed %>% dplyr::group_by(fed.High.Value) %>% mutate(xmin=min(Year), xmax=max(Year)) #adds col for first and last year 
 
-data2 <- data %>% group_by(State) %>% mutate(fed_diff = High.Value - fed$fed.High.Value)
+data2 <- data %>% group_by(State) %>% mutate(fed.diff = High.Value - fed$fed.High.Value)
 newdata <- merge(x=data2, y=eras)
 regions <- read.csv('us_regions.csv')
-head(regions)
+lc <- read.csv('livingcost.csv')
 newdata <- merge(newdata, regions)
+newdata <- merge(newdata, lc)
 ```
 
 
 All states over time -- ggplotly
 ```{r}
 library(plotly)
-p2 <- ggplot(newdata, aes(x=Year, y=High.Value, by=State)) + geom_line(aes(col=State)) 
+p2 <- ggplot(newdata, aes(x=Year, y=High.Value, by=State)) + geom_line(aes(col=State.Code)) 
 ggplotly(p2)
-newdata %>% group_by(Year) %>% group_by(Region) %>% summarise(mean(High.Value))
+p2
+```
+
+##Average State Minimum Wage by Division (Region) - Barplot
+Average (adjusted for inflation) for all years since 1980, by Regional Division
+```{r}
+k <- newdata %>% filter(Year>1990) %>% group_by(Year) %>% group_by(Division) %>% summarise(mean = mean(High.2018))
+k2 <- newdata %>% filter(Year>1990) %>% group_by(Year) %>% group_by(Division) %>% filter((High.Value != 0)) %>% summarise(mean = mean(High.2018)) #without datapoints with 0 values
+levels.k <- rev(factor(c("Federal", "New England", "Middle Atlantic", "South Atlantic", "East North Central", "East South Central", "West North Central", "West South Central", "Mountain", "Pacific")))
+k$Division <- factor(k$Division, levels=levels.k)
+k2$Division <- factor(k2$Division, levels=levels.k)
+p <- geom_col(data=k%>%filter(Division != 'Federal'), aes(fill=Division))
+p2 <- ggplot(k2%>%filter(Division != 'Federal'), aes(Division, mean)) + geom_col(aes(fill=Division), alpha=0.5)
+p2 + p + theme(axis.text.x = element_text(angle=25, size=8)) + labs(title="Average State Minimum Wage by Regional Division since 1980", subtitle = "(Adjusted for inflation)", y='Average Min. Wage (2018 dollars)', x='Regional Division')
 ```
 
 
 How do states compare with the Federal wage? Which states closely follow it? Which states are above? Below?
 ```{r}
+newdata$Division <- factor(newdata$Division, levels=levels.k)
 eralines <- geom_vline(xintercept = newdata$xmin, alpha=0.25)
-eralabels <- geom_text(data=newdata, x=newdata$xmin, y=4, label=newdata$fed.High.Value, angle=90, size=3, hjust=0.2)
-zeroline <- geom_hline(yintercept = 0)
-plotlabs <- labs(title = "State Minimum Wage -- difference from Federal minimum wage",
+eralabels <- geom_text(data=newdata, x=newdata$xmin, y=4, label=newdata$fed.High.Value, angle=90, size=3, hjust=0.2, alpha = 0.6)
+zeroline <- geom_hline(yintercept = 0, size=2)
+plotlabs <- labs(title = "State Minimum Wages since 1968",
                 y = 'Difference ($)')
-p3 <- ggplot(newdata, aes(x=Year, y=fed_diff, by=State)) + geom_line(aes(col=State))
+
+p3 <- ggplot(newdata, aes(x=Year, y=fed.diff, by=State)) + geom_line(aes(col=Region), position = position_dodge(width = 0.5)
+                                                                     )
+p3 + eralines + eralabels + zeroline + plotlabs + theme()
+
+ps <- c('IA', 'DC', 'CA', 'AK', 'WY', 'NE', 'PA', 'WA', 'MA')
+p4 <- ggplot(newdata %>% filter(State.Code %in% ps), 
+             aes(x=Year,y=High.Value, by=State))+
+  geom_line(aes(col=State), size=1.5, position = position_dodge(width = 0.5))
+p4 + plotlabs + geom_line(data=newdata%>%filter(State.Code=="FED"), size=1.5)
+p5 <- ggplot(newdata %>% filter(State.Code %in% ps), 
+             aes(x=Year,y=fed.diff, by=State))+
+  geom_line(aes(col=State), size=1.5, position = position_dodge(width = 0.5))
+p5 + eralines + eralabels + zeroline + labs(title='How State Minimums Deviate from Federal Minimums', y= 'Deviation ($) from Federal Min. Wage')
+p6 <- ggplot(newdata %>% filter(State.Code %in% ps), 
+             aes(x=Year,y=High.2018, by=State))+
+  geom_line(aes(col=State), size=1.5, position = position_dodge(width = 0.5))
+p6 + geom_line(data=newdata%>%filter(State.Code=="FED"), size=1.5) + labs(title='State minimum wages since 1968 (inflation adjusted)', y='Min. wage in 2018 equivalent dollars')
 ggplotly(p3 + eralines + zeroline + eralabels + plotlabs)
 
-p3 + eralines + eralabels + zeroline + plotlabs + theme(legend.position = "none")
 
 ```
+
+```{r}
+library(ggrepel)
+ggplot(newdata%>%filter(Year==2017) %>% filter(High.2018>6) %>% filter(State.Code !='FED'), aes(x=Rank, y=High.2018)) + geom_smooth() + geom_point(aes(shape=Region, col=Region), size=3) + geom_text_repel(aes(label=State.Code)) +
+  labs(title = 'Cost of Living vs. Minimum Wage',
+       x = 'Cost of Living (Rank)',
+       y = 'Minimum Wage')
+ggplot(newdata%>%filter(Year==2017) %>% filter(High.2018>6) %>% filter(State.Code !='FED'), aes(x=Index, y=High.2018)) + geom_smooth() + geom_point(aes(shape=Region, col=Region), size=3) + geom_text_repel(aes(label=State.Code)) +
+  labs(title = 'Cost of Living vs. Minimum Wage',
+       x = 'Cost of Living (Index)',
+       y = 'Minimum Wage')
+```
+
+
 
 How much is the minimum wage worth in 2018 dollars? 
 ```{r}
@@ -164,15 +209,19 @@ p4 + eralines + eralabels + plotlabs + fedline #+ theme(legend.position = "none"
 ```
 
 ```{r}
-p5 <- ggplot(newdata, aes(x=Year, y=CPI.Average/High.2018, by=State)) + geom_line(aes(col=State))
+p7 <- ggplot(newdata %>% filter(High.2018 != 0), aes(x=Year, y=CPI.Average/High.2018, by=State)) + geom_line(aes(col=State.Code))
 eralines <- geom_vline(xintercept = newdata$xmin, alpha=0.25)
 eralabels <- geom_text(data=newdata, x=newdata$xmin, y=15, label=newdata$fed.High.Value, angle=90, size=3, hjust=0.3)
 fedline <- geom_line(data = (newdata %>% filter(State=='Federal (FLSA)')), col="black", size=1.2)
-plotlabs <- labs(title = "Hours of min. wage work needed to meet CPI",
-                y = 'Hours')
-ggplotly(p5 + eralines + fedline + eralabels + plotlabs)
 
-p5 + eralines + eralabels + plotlabs + theme(legend.position = "none")
+ggplotly(p7 + eralines + fedline + eralabels + plotlabs)
+
+p7 + fedline + labs(title = "Hours of min. wage work needed to meet CPI",
+                y = 'Hours')
+```
+```{r}
+p8 <- ggplot(newdata%>%filter(High.Value>0), aes(y=High.2018, x=CPI.Average, col=Year)) + geom_point() + geom_smooth()
+p8
 ```
 
 Show a graphical summary of minimum wage growth or decline to keep up with inflation 
