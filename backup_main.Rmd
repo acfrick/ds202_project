@@ -27,7 +27,7 @@ head(data, 3)
 
 ```{r}
 # See if data types in columns are logical
-str(data)
+#str(data)
 
 ```
 
@@ -40,60 +40,61 @@ pre1990 <- filter(data, Year < 1990)
 post1990 <- filter(data, Year >= 1990)
 
 # Breakdown of data from each year
-p <- ggplot(pre1990, aes(x=Year)) + geom_histogram(color="black", fill="white", binwidth=1)
-p <- p + xlab("Year") + ylab("Count of Data Points") + ggtitle("Data Points by Year (Pre-1990)")
-p
+#p <- ggplot(pre1990, aes(x=Year)) + geom_histogram(color="black", fill="white", binwidth=1)
+#p <- p + xlab("Year") + ylab("Count of Data Points") + ggtitle("Data Points by Year (Pre-1990)")
+#p
 
-p <- ggplot(post1990, aes(x=Year)) + geom_histogram(color="black", fill="gray", binwidth=1)
-p <- p + xlab("Year") + ylab("Count of Data Points") + ggtitle("Data Points by Year (Post-1990)")
-p
+#p <- ggplot(post1990, aes(x=Year)) + geom_histogram(color="black", fill="gray", binwidth=1)
+#p <- p + xlab("Year") + ylab("Count of Data Points") + ggtitle("Data Points by Year (Post-1990)")
+#p
 
 # These histograms show that the data for each year is all even, so the comparisons should be fairly accurate
 
 # We will look at the spread of High.Value and Low.Value for each state by year
 
-p <- ggplot(pre1990, aes(x=Year, y=High.Value, color=State)) + geom_boxplot(outlier.color="red", outlier.shape=8, outlier.size=2)
-p <- p + xlab("Year") + ylab("Hourly Wage ($)") + ggtitle("Highest Minimum Wage Across US States pre-1990")
-p <- p + facet_wrap(pre1990$State) + theme(legend.position="none")
-p
+#p <- ggplot(pre1990, aes(x=Year, y=High.Value, color=State)) + geom_boxplot(outlier.color="red", outlier.shape=8, outlier.size=2)
+#p <- p + xlab("Year") + ylab("Hourly Wage ($)") + ggtitle("Highest Minimum Wage Across US States pre-1990")
+#p <- p + facet_wrap(pre1990$State) + theme(legend.position="none")
+#p
 
-p <- ggplot(pre1990, aes(x=Year, y=Low.Value, color=State)) + geom_boxplot(outlier.color="red", outlier.shape=8, outlier.size=2)
-p <- p + xlab("Year") + ylab("Hourly Wage ($)") + ggtitle("Lowest Minimum Wage Across US States pre-1990")
-p <- p + facet_wrap(pre1990$State) + theme(legend.position="none")
-p
+#p <- ggplot(pre1990, aes(x=Year, y=Low.Value, color=State)) + geom_boxplot(outlier.color="red", outlier.shape=8, outlier.size=2)
+#p <- p + xlab("Year") + ylab("Hourly Wage ($)") + ggtitle("Lowest Minimum Wage Across US States pre-1990")
+#p <- p + facet_wrap(pre1990$State) + theme(legend.position="none")
+#p
 
-p <- ggplot(post1990, aes(x=Year, y=High.Value, color=State)) + geom_boxplot(outlier.color="red", outlier.shape=8, outlier.size=2)
-p <- p + xlab("Year") + ylab("Hourly Wage ($)") + ggtitle("Highest Minimum Wage Across US States post-1990")
-p <- p + facet_wrap(post1990$State) + theme(legend.position="none")
-p
+#p <- ggplot(post1990, aes(x=Year, y=High.Value, color=State)) + geom_boxplot(outlier.color="red", outlier.shape=8, outlier.size=2)
+#p <- p + xlab("Year") + ylab("Hourly Wage ($)") + ggtitle("Highest Minimum Wage Across US States post-1990")
+#p <- p + facet_wrap(post1990$State) + theme(legend.position="none")
+#p
 
-p <- ggplot(post1990, aes(x=Year, y=Low.Value, color=State)) + geom_boxplot(outlier.color="red", outlier.shape=8, outlier.size=2)
-p <- p + xlab("Year") + ylab("Hourly Wage ($)") + ggtitle("Lowest Minimum Wage Across US States post-1990")
-p <- p + facet_wrap(post1990$State) + theme(legend.position="none")
-p
+#p <- ggplot(post1990, aes(x=Year, y=Low.Value, color=State)) + geom_boxplot(outlier.color="red", outlier.shape=8, outlier.size=2)
+#p <- p + xlab("Year") + ylab("Hourly Wage ($)") + ggtitle("Lowest Minimum Wage Across US States post-1990")
+#p <- p + facet_wrap(post1990$State) + theme(legend.position="none")
+#p
 ```
 
+Violin plots:
 ```{r}
 # Look at trend of High.Value and Low.Value across the years overall
-p <- ggplot(pre1990, aes(x=Year, y=High.Value)) + geom_violin(trim = FALSE)
-p <- p + stat_summary(fun.y=median, geom="line", shape=18, size=2, color="red")
-p <- p + ylab("High Minimum Wage ($)") + xlab("Year") + ggtitle("High Minimum Wage Trend pre-1990")
-p
+#p <- ggplot(pre1990, aes(x=Year, y=High.Value)) + geom_violin(trim = FALSE)
+#p <- p + stat_summary(fun.y=median, geom="line", shape=18, size=2, color="red")
+#p <- p + ylab("High Minimum Wage ($)") + xlab("Year") + ggtitle("High Minimum Wage Trend pre-1990")
+#p
 
-p <- ggplot(pre1990, aes(x=Year, y=Low.Value)) + geom_violin(trim = FALSE)
-p <- p + stat_summary(fun.y=median, geom="line", shape=18, size=2, color="blue")
-p <- p + ylab("Low Minimum Wage ($)") + xlab("Year") + ggtitle("Low Minimum Wage Trend pre-1990")
-p
+#p <- ggplot(pre1990, aes(x=Year, y=Low.Value)) + geom_violin(trim = FALSE)
+#p <- p + stat_summary(fun.y=median, geom="line", shape=18, size=2, color="blue")
+#p <- p + ylab("Low Minimum Wage ($)") + xlab("Year") + ggtitle("Low Minimum Wage Trend pre-1990")
+#p
 
-p <- ggplot(post1990, aes(x=Year, y=High.Value)) + geom_violin(trim = FALSE)
-p <- p + stat_summary(fun.y=median, geom="line", shape=18, size=2, color="green")
-p <- p + ylab("High Minimum Wage ($)") + xlab("Year") + ggtitle("High Minimum Wage Trend post-1990")
-p
+#p <- ggplot(post1990, aes(x=Year, y=High.Value)) + geom_violin(trim = FALSE)
+#p <- p + stat_summary(fun.y=median, geom="line", shape=18, size=2, color="green")
+#p <- p + ylab("High Minimum Wage ($)") + xlab("Year") + ggtitle("High Minimum Wage Trend post-1990")
+#p
 
-p <- ggplot(post1990, aes(x=Year, y=Low.Value)) + geom_violin(trim = FALSE)
-p <- p + stat_summary(fun.y=median, geom="line", shape=18, size=2, color="purple")
-p <- p + ylab("Low Minimum Wage ($)") + xlab("Year") + ggtitle("Low Minimum Wage Trend post-1990")
-p
+#p <- ggplot(post1990, aes(x=Year, y=Low.Value)) + geom_violin(trim = FALSE)
+#p <- p + stat_summary(fun.y=median, geom="line", shape=18, size=2, color="purple")
+#p <- p + ylab("Low Minimum Wage ($)") + xlab("Year") + ggtitle("Low Minimum Wage Trend post-1990")
+#p
 ```
 
 ```{r}
@@ -118,15 +119,16 @@ data2 <- data %>% group_by(State) %>% mutate(fed_diff = High.Value - fed$fed.Hig
 newdata <- merge(x=data2, y=eras)
 regions <- read.csv('us_regions.csv')
 head(regions)
-newdata2 <- left_join(newdata, regions)
+newdata <- merge(newdata, regions)
 ```
 
 
 All states over time -- ggplotly
 ```{r}
 library(plotly)
-p2 <- ggplot(data, aes(x=Year, y=High.Value, by=State)) + geom_line(aes(col=State)) 
+p2 <- ggplot(newdata, aes(x=Year, y=High.Value, by=State)) + geom_line(aes(col=State)) 
 ggplotly(p2)
+newdata %>% group_by(Year) %>% group_by(Region) %>% summarise(mean(High.Value))
 ```
 
 
@@ -151,11 +153,11 @@ eralabels <- geom_text(data=newdata, x=newdata$xmin, y=15, label=newdata$fed.Hig
 fedline <- geom_line(data = (newdata %>% filter(State=='Federal (FLSA)')), col="black", size=1.2)
 plotlabs <- labs(title = "State Minimum Wages in 2018 Dollars",
                 y = '($)')
-p4 <- ggplot(newdata, aes(x=Year, y=High.2018, by=State)) + geom_line(aes(col=State))
+p4 <- ggplot(newdata, aes(x=Year, y=High.2018, by=State)) + geom_line(aes(col=Region))
 
 ggplotly(p4 + eralines + fedline + eralabels + plotlabs)
 
-p4 + eralines + eralabels + plotlabs + fedline + theme(legend.position = "none")
+p4 + eralines + eralabels + plotlabs + fedline #+ theme(legend.position = "none")
 
 
 
