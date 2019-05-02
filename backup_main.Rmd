@@ -153,13 +153,13 @@ eralines <- geom_vline(xintercept = newdata$xmin, alpha=0.25)
 eralabels <- geom_text(data=newdata, x=newdata$xmin, y=4, label=newdata$fed.High.Value, angle=90, size=3, hjust=0.2, alpha = 0.6)
 zeroline <- geom_hline(yintercept = 0, size=2)
 plotlabs <- labs(title = "State Minimum Wages since 1968",
-                y = 'Difference ($)')
+                y = 'Min. wage ($)')
 
-p3 <- ggplot(newdata, aes(x=Year, y=fed.diff, by=State)) + geom_line(aes(col=Region), position = position_dodge(width = 0.5)
+p3 <- ggplot(newdata, aes(x=Year, y=fed.diff, by=State)) + geom_line(aes(col=Division), position = position_dodge(width = 0.5)
                                                                      )
 p3 + eralines + eralabels + zeroline + plotlabs + theme()
 
-ps <- c('IA', 'DC', 'CA', 'AK', 'WY', 'NE', 'PA', 'WA', 'MA')
+ps <- c('IA', 'DC', 'CA', 'AK', 'WY', 'PA', 'WA')
 p4 <- ggplot(newdata %>% filter(State.Code %in% ps), 
              aes(x=Year,y=High.Value, by=State))+
   geom_line(aes(col=State), size=1.5, position = position_dodge(width = 0.5))
@@ -217,7 +217,7 @@ fedline <- geom_line(data = (newdata %>% filter(State=='Federal (FLSA)')), col="
 ggplotly(p7 + eralines + fedline + eralabels + plotlabs)
 
 p7 + fedline + labs(title = "Hours of min. wage work needed to meet CPI",
-                y = 'Hours')
+                y = 'Hours') + eralines
 ```
 ```{r}
 p8 <- ggplot(newdata%>%filter(High.Value>0), aes(y=High.2018, x=CPI.Average, col=Year)) + geom_point() + geom_smooth()
