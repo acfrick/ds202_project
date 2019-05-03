@@ -14,56 +14,106 @@ output: html_document
 
 #Minimum Wages#
 
-**Description**
-Sourced from the United States Deptarment of Labor (DOL), this data set surrounds minimum wages in the United States from 1968 to 2017. Each wage provided in the data has a 2018 equivalency value.
+Minimum wage has by and large been a topic of discussion in recent years. Between those who argue for and against increasing minimum wage, there are several external factors that influence the decision to increase or keep the minimum wage level. But one question remains certain: what was minimum wage in the past, and what does the trend of minimum wage levels look like in the last 50 years among the states?
 
-**Columns**
-- Year
-- State
-- Table Data: uncleaned data from the DOL
-- Footnote: supplementary information from the DOL
-- High.Value: Proposed minimum wage for those protected under the state's minimum wage laws
-- Low.Value: Implemented minimum wage for those protected under the state's minimum wage laws
-- High.2018: The High.Value in a 2018 dollar value
-- Low.2018: The Low.Value in a 2018 dollar value
-- CPI.Average: Average Consumer Price Index for the corresponding year. Out of a basket of goods accessible to everyone, CPI average is the average number of goods purchased by one consumer over the course of the year. CPI stays the same, but the price changes over the years. Thus, CPI average is used to calculcate a year's 2018-equivalent value.
+The United States Department of Labor published the minimum wage rates for each state, ranging from 1968 to 2017. Each of these rates has a 2018-dollar equivalent that can be used to determine inflation rates and display fluctuation.
 
-**Questions Raised**
+The cleaned version of the Department of Labor’s data, which was provided on Kaggle, was relatively clean. For the purpose of this investigation, state, year, implemented minimum wage, 2018-dollar equivalent and CPI Average columns were used.
 
-1. Which states showed the highest growth and which states showed the lowest growth of minimum wage?
-2. Compare the minimum wage to the Consumer Price Index (CPI)
-3. Explore if the gap between minimum wage and CPI has narrowed between the 2018-equivalent highs and lows as the years increase.
-4. Show a graphical summary of minimum wage's growth or decline to keep up with inflation.
+With the given data and above columns listed, the following is explored:
+•	How wages across the United States and within states fluctuate and how
+they compare to inflation over time
+•	Which states showed the highest and lowest growth of minimum wage
+•	Compare minimum wage to CPI
+•	Explore the gap between minimum wage and CPI and if it has narrowed between the 2018-equivalent as years increase
+•	Display minimum wage growth or decline to keep up with inflation
 
 **Pipeline for Cleaning**
 
-The data was already cleaned on Kaggle, so the cleaning is very minimal. Outside of deleting the two columns that did not contain valuable information, the NA values, data types, factoring, etc. was already done. It is logical to delete Table_Data and Footnote columns, these are just notes and not useful. For graphing, the data will be divided into pre-1990 and 1990-2017.
+Cleaning for this investigation was relatively simple. Outside of deleting two columns that did not contain valuable information, the NA values, data types, factoring, etc. was already done. It is logical to delete Table_Data and Footnote columns because they are not useful for the purpose of this project.
 
-```{r}
+```{r, echo=FALSE}
 library(tidyverse)
-knitr::opts_chunk$set(fig.width = 15, fig.height=10) # change figure size in Rmd/HTML
-# Load data from CSV
+knitr::opts_chunk$set(fig.width = 15, fig.height=10)
 data <- read.csv('MinimumWageData.csv')
 names(data)
 head(data, 2)
 ```
 
-```{r}
+```{r, echo=FALSE}
 drops <- c("Table_Data", "Footnote")
 data <- data[, !(names(data) %in% drops)]
 head(data, 3)
 ```
 
-```{r}
-pre1990 <- filter(data, Year < 1990)
-post1990 <- filter(data, Year >= 1990)
+**Exploratory Analysis and Visualization:**
+
+**Minimum Wages Over Time in Relation to Federal Minimum Wage**
+
+```{r, echo=FALSE}
+fed <- data %>% filter(State == 'Federal (FLSA)') %>% select(Year, High.Value)
+fed$fed.High.Value <- fed$High.Value
+fed <- fed %>% select(Year, fed.High.Value)
+eras <- fed %>% dplyr::group_by(fed.High.Value) %>% mutate(xmin=min(Year), xmax=max(Year))
+data2 <- data %>% group_by(State) %>% mutate(fed.diff = High.Value - fed$fed.High.Value)
+newdata <- merge(x=data2, y=eras)
+regions <- read.csv('us_regions.csv')
+lc <- read.csv('livingcost.csv')
+newdata <- merge(newdata, regions)
+newdata <- merge(newdata, lc)
 ```
 
-**Exploratory Analysis**
+```{r, echo=FALSE}
+plotlabs <- labs(title = "State Minimum Wages since 1968",
+                y = 'Min. wage ($)')
+ps <- c('IA', 'DC', 'CA', 'AK', 'WY', 'PA', 'WA')
+p4 <- ggplot(newdata %>% filter(State.Code %in% ps), 
+             aes(x=Year,y=High.Value, by=State))+
+  geom_line(aes(col=State), size=1.5, position = position_dodge(width = 0.5))
+p4 + plotlabs + geom_line(data=newdata%>%filter(State.Code=="FED"), size=1.5)
+```
 
-**Visualization**
+This figure displays states' minimum wages over time. These states are the states tht have more extreme flucuations in minimum wage rates. The black line represents the federal minimum wage level over time.
 
-**Answers to Questions**
+Iowa's line displays no establishment of a minimum wage until 1990. 1990 establishes a minimum wage at the federal minimum wage level. On the opposite end, Washington D.C. displays a more dramatic flucuation of minimum wage. The minimum wage in Washington D.C. has mostly been above federal minimum wage. This is a similar situation with Alaska.
 
-**Conclusion**
-include limitations here, what we would do differently and explore more
+In later investigation, we will determine a reason for higher minimum wages is to keep up with the cost of living in that state.
+
+**Cost of Living versus Minimum Wage**
+
+```{r, echo=FALSE}
+library(ggrepel)
+ggplot(newdata%>%filter(Year==2017) %>% filter(High.2018>6) %>% filter(State.Code !='FED'), aes(x=Rank, y=High.2018)) + geom_smooth() + geom_point(aes(shape=Region, col=Region), size=3) + geom_text_repel(aes(label=State.Code)) +
+  labs(title = 'Cost of Living vs. Minimum Wage',
+       x = 'Cost of Living (Rank)',
+       y = 'Minimum Wage')
+```
+
+
+
+**Trends by Region**
+
+```{r, echo=FALSE}
+k <- newdata %>% filter(Year>1990) %>% group_by(Year) %>% group_by(Division) %>% summarise(mean = mean(High.2018))
+k2 <- newdata %>% filter(Year>1990) %>% group_by(Year) %>% group_by(Division) %>% filter((High.Value != 0)) %>% summarise(mean = mean(High.2018))
+levels.k <- rev(factor(c("Federal", "New England", "Middle Atlantic", "South Atlantic", "East North Central", "East South Central", "West North Central", "West South Central", "Mountain", "Pacific")))
+k$Division <- factor(k$Division, levels=levels.k)
+k2$Division <- factor(k2$Division, levels=levels.k)
+p <- geom_col(data=k%>%filter(Division != 'Federal'), aes(fill=Division))
+p2 <- ggplot(k2%>%filter(Division != 'Federal'), aes(Division, mean)) + geom_col(aes(fill=Division), alpha=0.5)
+p2 + p + theme(axis.text.x = element_text(angle=25, size=8)) + labs(title="Average State Minimum Wage by Regional Division since 1980", subtitle = "(Adjusted for inflation)", y='Average Min. Wage (2018 dollars)', x='Regional Division')
+```
+
+After dividing the states into the regions of the United States, the graph displays the average minimum wage in 2018-dollar amounts by each region. For instance, the Pacific, New England and Middle Atlantic regions reflect higher minimum wages. As we are shown from the above graphs, this could be because of the high cost of living along the east and west coasts of the United States.
+
+Displayed by the above visualizations, it is evident that minimum wage has continually increased over time. Furthermore, states along the coasts have higher minimum wage growths than states in the Midwest. To further our investigation, we should consider population by state; predict the future value of the dollar and inflation rates; predict CPI for 2019; and further analyze demographics of those who live in different states in relation to minimum wages across the United States.
+
+#Personal Contributions#
+
+Allegra: Ally was the project coordinator. Ally compiled the presentation, wrote the project report and coordinated with the group members. For the presentation, Ally completed and presented the introduction, obtaining data, background of the dataset, questions raised, where to apply and contributed to the findings. Ally wrote the project report and compiled the report.
+
+Audrey: Audrey created all of the visualizations for the presentation and report. This included exploring more of the cleaned dataset, joining other data, exploring the joined data and visualizing the manipulated data to answer our questions and achieve our overall goal. Audrey also helped write the project report. More specifically, she wrote the explanations for the graphs.
+
+Bradley: Brad completed the exploratory analysis for the data. This included exploring the basic structure of the data and seeing what questions can be raised. In addition, Brad came up with several questions that can be answered by the data and contributed to finding the answers to those questions.
+
+Seydou: Seydou helped Brad with the explanatory analysis. He also compiled the findings and wrote the conclusion of the presentation. The conclusion also included brainstorming ways we can further our investigation with this dataset. Seydou also helped Brad find the answers to the questions.
