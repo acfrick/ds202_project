@@ -1,40 +1,38 @@
 ---
-title: "project_report"
-author: "Allegra Frickel"
-date: "4/25/2019"
-output: html_document
----
-
----
-title: "Project_report"
-author: "Allegra Frickel"
-date: "4/25/2019"
+title: "Team 5 Project Report"
+author: "Allegra Frickel, Audrey Comer, Bradley Gannon, Seydou Yacoba Seydou"
+date: "5/6/2019"
 output: html_document
 ---
 
 #Minimum Wages#
 
-Minimum wage has by and large been a topic of discussion in recent years. Between those who argue for and against increasing minimum wage, there are several external factors that influence the decision to increase or keep the minimum wage level. But one question remains certain: what was minimum wage in the past, and what does the trend of minimum wage levels look like in the last 50 years among the states?
+Minimum wage has by and large been a topic of discussion in recent years. Between those who argue for and against increasing minimum wage, there are several external factors that influence the decision to increase or keep the minimum wage level. However, one question remains certain: what was minimum wage in the past, and what does the trend of minimum wage levels look like in the last 50 years among the states?
 
 The United States Department of Labor published the minimum wage rates for each state, ranging from 1968 to 2017. Each of these rates has a 2018-dollar equivalent that can be used to determine inflation rates and display fluctuation.
 
-The cleaned version of the Department of Labor’s data, which was provided on Kaggle, was relatively clean. For the purpose of this investigation, state, year, implemented minimum wage, 2018-dollar equivalent and CPI Average columns were used.
+The cleaned version of the Department of Labor’s data, which was provided on Kaggle, was relatively clean and usable for this investigation. For the purpose, state, year, implemented minimum wage, 2018-dollar equivalent and CPI Average columns were used. The Kaggle file was imported into RStudio as a CSV file.
 
 With the given data and above columns listed, the following is explored:
-•	How wages across the United States and within states fluctuate and how
-they compare to inflation over time
-•	Which states showed the highest and lowest growth of minimum wage
-•	Compare minimum wage to CPI
-•	Explore the gap between minimum wage and CPI and if it has narrowed between the 2018-equivalent as years increase
-•	Display minimum wage growth or decline to keep up with inflation
+
+How wages across the United States fluctuate over time
+
+Which states showed the highest and lowest growth of minimum wage?
+
+What are some states that closely follow minimum wage or hardly follow federal minimum wage?
+
+How does state minimum wage relate to the state's cost of living?
+  
+What regions of the United States have high and low minimum wage?
+
+**Exploratory Analysis and Visualizations:**
 
 **Pipeline for Cleaning**
 
-Cleaning for this investigation was relatively simple. Outside of deleting two columns that did not contain valuable information, the NA values, data types, factoring, etc. was already done. It is logical to delete Table_Data and Footnote columns because they are not useful for the purpose of this project.
+Cleaning for this investigation was relatively simple. Outside deleting unneccessary columns, NA values, data types and factoring, cleaning was already done. It is logical to delete Table_Data and Footnote columns because they are not useful for the purpose of this project. Thus, the primary method for cleaning was filtering out the unneeded columns.
 
 ```{r, echo=FALSE}
 library(tidyverse)
-knitr::opts_chunk$set(fig.width = 15, fig.height=10)
 data <- read.csv('MinimumWageData.csv')
 names(data)
 head(data, 2)
@@ -46,9 +44,9 @@ data <- data[, !(names(data) %in% drops)]
 head(data, 3)
 ```
 
-**Exploratory Analysis and Visualization:**
-
 **Minimum Wages Over Time in Relation to Federal Minimum Wage**
+
+To begin the exploration, the minimum wages across the United States over time are plotted as a line plot.
 
 ```{r, echo=FALSE}
 fed <- data %>% filter(State == 'Federal (FLSA)') %>% select(Year, High.Value)
@@ -64,6 +62,14 @@ newdata <- merge(newdata, lc)
 ```
 
 ```{r, echo=FALSE}
+library(plotly)
+p2 <- ggplot(newdata, aes(x=Year, y=High.Value, by=State)) + geom_line(aes(col=State.Code)) + ylab('Minimum wage value')
+ggplotly(p2)
+```
+
+There is an evident upward trend in minimum wages in the United States over time. The above figure displays all of the minimum wages of the states and territories in the United States since 1968. This plot fulfills our question of how the minimum wages have flucuated over time. There are some states that have not had a minimum wage and several states that are above the federal minimum wage. This discovery leads us to the next curiosity: which states have the highest and lowest minimum wages.
+
+```{r, echo=FALSE}
 plotlabs <- labs(title = "State Minimum Wages since 1968",
                 y = 'Min. wage ($)')
 ps <- c('IA', 'DC', 'CA', 'AK', 'WY', 'PA', 'WA')
@@ -73,11 +79,13 @@ p4 <- ggplot(newdata %>% filter(State.Code %in% ps),
 p4 + plotlabs + geom_line(data=newdata%>%filter(State.Code=="FED"), size=1.5)
 ```
 
-This figure displays states' minimum wages over time. These states are the states tht have more extreme flucuations in minimum wage rates. The black line represents the federal minimum wage level over time.
+This figure displays the more extreme minimum wages over time. These states have more greater flucuations in minimum wage rates. The black line represents the federal minimum wage level over time.
 
-Iowa's line displays no establishment of a minimum wage until 1990. 1990 establishes a minimum wage at the federal minimum wage level. On the opposite end, Washington D.C. displays a more dramatic flucuation of minimum wage. The minimum wage in Washington D.C. has mostly been above federal minimum wage. This is a similar situation with Alaska.
+Iowa's trend line displays no establishment of a minimum wage until 1990, which then followed the federal minimum wage level. On the high end, Washington D.C. displays a more dramatic flucuation of minimum wage, which has continually been higher than federal minimum wage. Alaska is in a similar situation as Washington D.C. -- a higher minimum wage than the federal minimum wage.
 
-In later investigation, we will determine a reason for higher minimum wages is to keep up with the cost of living in that state.
+With this figure, it is shown that Washington D.C. has the highest minimum wage in the United States, and Wyoming has had the lowest minimum wage. It is also shown that Pennsylvania has closely followed federal minimum wage over time, where Washington D.C., Alaska and California have not.
+
+In later investigation, there is an evident reason for higher minimum wages. The higher minimum wages are to keep up with the cost of living in that state.
 
 **Cost of Living versus Minimum Wage**
 
@@ -89,7 +97,7 @@ ggplot(newdata%>%filter(Year==2017) %>% filter(High.2018>6) %>% filter(State.Cod
        y = 'Minimum Wage')
 ```
 
-
+To visualize a reason why some states have a higher minimum wage, the above figure displays states' cost of living in relation to its minimum wage. Washington D.C. appears to have a high cost of living and high minimum wage, which is what the previous findings display as well.
 
 **Trends by Region**
 
@@ -106,7 +114,9 @@ p2 + p + theme(axis.text.x = element_text(angle=25, size=8)) + labs(title="Avera
 
 After dividing the states into the regions of the United States, the graph displays the average minimum wage in 2018-dollar amounts by each region. For instance, the Pacific, New England and Middle Atlantic regions reflect higher minimum wages. As we are shown from the above graphs, this could be because of the high cost of living along the east and west coasts of the United States.
 
-Displayed by the above visualizations, it is evident that minimum wage has continually increased over time. Furthermore, states along the coasts have higher minimum wage growths than states in the Midwest. To further our investigation, we should consider population by state; predict the future value of the dollar and inflation rates; predict CPI for 2019; and further analyze demographics of those who live in different states in relation to minimum wages across the United States.
+Displayed by the above visualizations, it is evident that minimum wage has continually increased over time. One reason for the increasing minimum wage could be to keep up with cost of living. Furthermore, states along the coasts have higher minimum wage growths than states in the Midwest. The findings throughout this report can be applied in several areas, such as finding a job and where to live, economic analysis, political decision making and finding sustainable minimum wages in a specific state or region.
+
+To further our investigation, we should consider population by state and how that could be a reason for higher minimum wages; predict the future value of the dollar and inflation rates; predict CPI for 2019; and further analyze demographics of those who live in different states in relation to minimum wages across the United States.
 
 #Personal Contributions#
 
