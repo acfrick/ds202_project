@@ -97,7 +97,7 @@ ggplot(newdata%>%filter(Year==2017) %>% filter(High.2018>6) %>% filter(State.Cod
        y = 'Minimum Wage')
 ```
 
-To visualize a reason why some states have a higher minimum wage, the above figure displays states' cost of living in relation to its minimum wage. Washington D.C. appears to have a high cost of living and high minimum wage, which is what the previous findings display as well.
+To visualize a reason why some states have a higher minimum wage, the above figure displays states' cost of living in relation to its minimum wage. Washington D.C. appears to have a high cost of living and high minimum wage, which is what the previous findings display as well. The center blue line is the average minimum wage, and the gray bands are the standard deviation below and above the average. Thus, it is expected that Washington D.C. is out of those bounds.
 
 **Trends by Region**
 
