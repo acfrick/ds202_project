@@ -118,6 +118,16 @@ Displayed by the above visualizations, it is evident that minimum wage has conti
 
 To further our investigation, we should consider population by state and how that could be a reason for higher minimum wages; predict the future value of the dollar and inflation rates; predict CPI for 2019; and further analyze demographics of those who live in different states in relation to minimum wages across the United States.
 
+**Sources**
+
+Our dataset: https://www.kaggle.com/lislejoem/us-minimum-wage-by-state-from-1968-to-2017
+
+Cost of Living data: https://www.missourieconomy.org/indicators/cost_of_living/
+
+Regions data: https://github.com/cphalpert/census-regions/blob/master/us%20census%20bureau%20regions%20and%20divisions.csv
+
+Supplemental information used in presentation: https://smartasset.com/retirement/average-salary-in-san-francisco
+
 #Personal Contributions#
 
 Allegra: Ally was the project coordinator. Ally compiled the presentation, wrote the project report and coordinated with the group members. For the presentation, Ally completed and presented the introduction, obtaining data, background of the dataset, questions raised, where to apply and contributed to the findings. Ally wrote the project report and compiled the report.
